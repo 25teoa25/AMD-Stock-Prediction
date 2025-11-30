@@ -32,6 +32,9 @@ SENTIMENT_PROMPT_TEMPLATE = (
     "where 0 is neutral: {article_text}"
 )
 
+# OpenAI model for sentiment analysis
+OPENAI_MODEL = "gpt-5-mini"
+
 # Model settings
 RANDOM_STATE = 42
 MODEL_SAVE_DIR = "models"

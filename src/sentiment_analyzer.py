@@ -67,7 +67,7 @@ def analyze_article_sentiment(article_text, client):
     
     try:
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=config.OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": "You are a financial sentiment analyzer. Output only a numeric score."},
                 {"role": "user", "content": prompt}
