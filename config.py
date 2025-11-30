@@ -3,12 +3,13 @@ Configuration constants for AMD Stock Prediction project
 """
 
 # Date ranges
+# Updated to use data up to today (2025-11-29)
 TRAIN_START_DATE = "2020-01-01"
-TRAIN_END_DATE = "2023-06-30"
-TEST_START_DATE = "2023-07-01"
-TEST_END_DATE = "2023-12-31"
+TRAIN_END_DATE = "2025-05-31"  # Train on data up to ~6 months ago
+TEST_START_DATE = "2025-06-01"  # Test on recent 6 months
+TEST_END_DATE = "2025-11-29"    # Test up to today
 DATA_START_DATE = "2020-01-01"
-DATA_END_DATE = "2023-12-31"
+DATA_END_DATE = "2025-11-29"   # Fetch all available data up to today
 
 # Stock symbol
 STOCK_SYMBOL = "AMD"
@@ -24,6 +25,11 @@ TARGET_THRESHOLD = 0.005  # 0.5% return threshold
 # News API settings
 MAX_NEWS_ARTICLES_PER_DAY = 5
 NEWS_QUERY = "AMD OR Advanced Micro Devices"
+
+# NewsAPI constraints (free tier limitations)
+NEWSAPI_MAX_ARTICLES_PER_DAY = 100  # Maximum total articles per day
+NEWSAPI_HISTORICAL_LIMIT_DAYS = 30  # Can only search articles up to 30 days old
+NEWSAPI_DELAY_HOURS = 24  # Articles are delayed by 24 hours (today's articles available tomorrow)
 
 # Sentiment analysis prompt
 SENTIMENT_PROMPT_TEMPLATE = (

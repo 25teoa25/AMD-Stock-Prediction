@@ -29,6 +29,11 @@ def fetch_data():
     print("\n" + "="*60)
     print("STEP 2: Fetching News Data")
     print("="*60)
+    print("Note: NewsAPI free tier constraints:")
+    print(f"  - Max {config.NEWSAPI_MAX_ARTICLES_PER_DAY} articles per day")
+    print(f"  - {config.NEWSAPI_HISTORICAL_LIMIT_DAYS}-day historical limit")
+    print(f"  - {config.NEWSAPI_DELAY_HOURS}-hour delay (today's articles available tomorrow)")
+    print("  - News data may be limited for historical dates\n")
     news_df = fetch_news_data()
     
     return stock_df, news_df
@@ -154,9 +159,6 @@ def run_prediction():
         print("\nMaking predictions with XGBoost...")
         xgb_pred, xgb_proba = predict_batch('xgboost', test_df)
         
-        print("\nMaking predictions with Random Forest...")
-        rf_pred, rf_proba = predict_batch('random_forest', test_df)
-        
         # Display results
         print("\n" + "="*60)
         print("PREDICTION RESULTS")
@@ -165,14 +167,11 @@ def run_prediction():
         results_df = test_df[['target']].copy()
         results_df['xgb_pred'] = xgb_pred
         results_df['xgb_proba'] = xgb_proba
-        results_df['rf_pred'] = rf_pred
-        results_df['rf_proba'] = rf_proba
         
         print("\nFirst 10 predictions:")
         print(results_df.head(10))
         
         print(f"\nXGBoost accuracy: {(xgb_pred == test_df['target'].values).mean():.4f}")
-        print(f"Random Forest accuracy: {(rf_pred == test_df['target'].values).mean():.4f}")
         
         return results_df
         
@@ -183,15 +182,23 @@ def run_prediction():
         sys.exit(1)
 
 
+def run_predict_next():
+    """Predict next market day using current data."""
+    from predict_next_day import predict_next_market_day
+    
+    result = predict_next_market_day()
+    return result
+
+
 def main():
     """Main entry point with CLI."""
     parser = argparse.ArgumentParser(description='AMD Stock Prediction Pipeline')
     parser.add_argument(
         '--mode',
         type=str,
-        choices=['all', 'fetch', 'train', 'predict'],
+        choices=['all', 'fetch', 'train', 'predict', 'predict-next'],
         default='all',
-        help='Pipeline mode: all (full pipeline), fetch (data only), train (training only), predict (predictions only)'
+        help='Pipeline mode: all (full pipeline), fetch (data only), train (training only), predict (test data), predict-next (next market day)'
     )
     
     args = parser.parse_args()
@@ -205,6 +212,8 @@ def main():
         run_training_only()
     elif args.mode == 'predict':
         run_prediction()
+    elif args.mode == 'predict-next':
+        run_predict_next()
     else:
         print(f"Unknown mode: {args.mode}")
         sys.exit(1)
